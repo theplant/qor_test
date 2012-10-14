@@ -7,8 +7,26 @@ module Qor
         self.options = options
       end
 
+      def get_gems_from_gemfile
+      end
+
+      def get_gems_from_config
+        gems = []
+
+        if Qor::Test::Configuration.root
+          gems << Qor::Test::Configuration.find(:gem)
+
+          if options[:env]
+            env = Qor::Test::Configuration.first(:env, options[:env])
+            gems << env.find(:gem) if env
+          end
+        end
+
+        gems
+      end
+
       def generate_gemfiles
-        [1]
+        []
       end
     end
   end
