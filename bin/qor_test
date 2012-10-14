@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__),'..','lib'))
+require 'optparse'
+require 'qor_test/cli'
+
+options = {}
+
+OptionParser.new do |opts|
+	opts.on( '-e', '--env env', 'Test Env' ) do |env|
+		options[:env] = env
+	end
+
+	opts.on( '-c', '--command command', 'Command' ) do |command|
+		options[:command] = command
+	end
+
+	opts.on( '-h', '--help', 'Display this help' ) do
+		puts opts
+		exit
+	end
+	opts.parse!
+end
+
+Qor::Test::Cli.new(options).run
