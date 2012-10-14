@@ -16,4 +16,6 @@ Gem::Specification.new do |gem|
   gem.name          = "qor_test"
   gem.require_paths = ["lib"]
   gem.version       = QorTest::VERSION
+
+  gem.add_dependency "qor_dsl"
 end
