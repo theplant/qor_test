@@ -1,3 +1,5 @@
-module QorTest
-  VERSION = "0.0.1"
+module Qor
+  module Test
+    VERSION = "0.0.1"
+  end
 end

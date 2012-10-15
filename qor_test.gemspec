@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "qor_test"
   gem.require_paths = ["lib"]
-  gem.version       = QorTest::VERSION
+  gem.version       = Qor::Test::VERSION
 
   gem.add_dependency "qor_dsl"
 end

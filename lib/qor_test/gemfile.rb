@@ -1,10 +1,14 @@
 module Qor
   module Test
-    class Bundler
-      attr_accessor :options
+    class Gemfile
+      attr_accessor :options, :default_gemfile
 
       def initialize(options={})
         self.options = options
+
+        gemfile_path = ENV['BUNDLE_GEMFILE'] || 'Gemfile'
+        default_gemfile = Qor::Test::Configuration.load(gemfile_path, {:force => true}) if File.exist?(gemfile_path)
+        config_gemfile = Qor::Test::Configuration.load(nil, {:force => true})
       end
 
       def get_gems_from_gemfile
