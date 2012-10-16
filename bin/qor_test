@@ -7,5 +7,5 @@ bin_file = Pathname.new(__FILE__).realpath
 $:.unshift File.expand_path("../../lib", bin_file)
 
 # start up the Cli
-require "qor_test"
+require "qor_test/cli"
 Qor::Test::CLI.start(*ARGV)

@@ -1,3 +1,5 @@
+require "qor_test/configuration"
+
 module Qor
   module Test
     class Gemfile

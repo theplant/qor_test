@@ -1,4 +1,5 @@
 require "optparse"
+require "qor_test/gemfile"
 
 module Qor
   module Test
