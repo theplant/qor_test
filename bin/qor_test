@@ -8,4 +8,4 @@ $:.unshift File.expand_path("../../lib", bin_file)
 
 # start up the Cli
 require "qor_test"
-Qor::Test::Cli.start(*ARGV)
+Qor::Test::CLI.start(*ARGV)

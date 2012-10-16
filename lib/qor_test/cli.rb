@@ -2,7 +2,7 @@ require "optparse"
 
 module Qor
   module Test
-    class Cli
+    class CLI
       attr_accessor :options
 
       def initialize(options={})
