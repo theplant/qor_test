@@ -1,25 +1,11 @@
 #!/usr/bin/env ruby
+# encoding: UTF-8
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__),'..','lib'))
-require 'optparse'
-require 'qor_test'
+require "pathname"
+bin_file = Pathname.new(__FILE__).realpath
 
-options = {}
+$:.unshift File.expand_path("../../lib", bin_file)
 
-OptionParser.new do |opts|
-	opts.on( '-e', '--env env', 'Test Env' ) do |env|
-		options[:env] = env
-	end
-
-	opts.on( '-c', '--command command', 'Command' ) do |command|
-		options[:command] = command
-	end
-
-	opts.on( '-h', '--help', 'Display this help' ) do
-		puts opts
-		exit
-	end
-	opts.parse!
-end
-
-Qor::Test::Cli.new(options).run
+# start up the Cli
+require "qor_test"
+Qor::Test::Cli.start(*ARGV)
