@@ -1,5 +1,6 @@
 require "optparse"
 require "qor_test/gemfile"
+require 'qor_test/version'
 
 module Qor
   module Test
@@ -10,7 +11,7 @@ module Qor
         self.options = options
       end
 
-      def prepare_run
+      def run
         gemfiles = Qor::Test::Gemfile.new(options).generate_gemfiles
 
         gemfiles.map do |gemfile|
@@ -19,34 +20,30 @@ module Qor
         end
       end
 
-      def run
-        prepare_run
-        option_parser.parse!
-      end
+      def self.option_parser
+        options = {}
 
-      def option_parser
-        @option_parser ||= OptionParser.new do |opts|
-          opts.on( '-v', '--version number', 'Version info' ) do |version|
-            options[:version] = version
-          end
-
-          opts.on( '-e', '--env env', 'Test Env' ) do |env|
+        OptionParser.new do |opts|
+          opts.on( '-e', '--env env', 'Test Env') do |env|
             options[:env] = env
           end
 
-          opts.on( '-c', '--command command', 'Command' ) do |command|
+          opts.on( '-c', '--command command', 'Command') do |command|
             options[:command] = command
           end
 
-          opts.on( '-h', '--help', 'Display this help' ) do
+          opts.on( '-h', '--help', 'Display this help') do
             puts opts
             exit
           end
-        end
-      end
 
-      def self.start(*args)
-        new(args).run
+          opts.on( '-v', '--version', 'Show version number') do |version|
+            puts "Version: #{Qor::Test::VERSION}"
+            exit
+          end
+        end.parse!
+
+        options
       end
     end
   end
