@@ -26,6 +26,10 @@ module Qor
 
       def option_parser
         @option_parser ||= OptionParser.new do |opts|
+          opts.on( '-v', '--version number', 'Version info' ) do |version|
+            options[:version] = version
+          end
+
           opts.on( '-e', '--env env', 'Test Env' ) do |env|
             options[:env] = env
           end
