@@ -5,7 +5,7 @@ require "pathname"
 bin_file = Pathname.new(__FILE__).realpath
 $:.unshift File.expand_path("../../lib", bin_file)
 
-require "qor_test/cli"
+require "qor_test"
 
 options = Qor::Test::CLI.option_parser
 Qor::Test::CLI.new(options).run

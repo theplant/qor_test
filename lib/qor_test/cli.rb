@@ -1,6 +1,4 @@
 require "optparse"
-require "qor_test/gemfile"
-require 'qor_test/version'
 
 module Qor
   module Test
@@ -12,7 +10,7 @@ module Qor
       end
 
       def run
-        gemfiles = Qor::Test::Gemfile.new(options).generate_gemfiles
+        gemfiles = Qor::Test::Bundler.new(options).generate_gemfiles
 
         gemfiles.map do |gemfile|
           system("bundle install --gemfile='#{gemfile}'")
