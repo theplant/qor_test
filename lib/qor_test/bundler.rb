@@ -1,5 +1,3 @@
-require 'tempfile'
-
 module Qor
   module Test
     class Bundler
@@ -32,8 +30,7 @@ module Qor
         gems_name = gems_hash.keys
         gemfile_length = [gems_set.length, 1].max
 
-        tempfile = Tempfile.new('fake')
-        gemfile_dir = File.join(File.dirname(tempfile.path), "qor_test-tmp-#{Time.now.to_i}")
+        gemfile_dir = File.join(Qor::Test::CLI.temp_directory, "qor_test-tmp-#{Time.now.to_i}")
         FileUtils.mkdir_p(gemfile_dir)
 
         filenames = (0...gemfile_length).map do |t|

@@ -1,4 +1,5 @@
 require "optparse"
+require 'tempfile'
 require "fileutils"
 
 module Qor
@@ -58,6 +59,12 @@ module Qor
             options[:command] = command
           end
 
+          opts.on( '-C', '--clean', 'Clean old temp files') do |command|
+            puts "Cleaning temp files..."
+            FileUtils.rm_rf(Dir[File.join(temp_directory, "qor_test-tmp-*")])
+            exit
+          end
+
           opts.on( '-h', '--help', 'Display this help') do
             puts opts
             exit
@@ -70,6 +77,11 @@ module Qor
         end.parse!
 
         options
+      end
+
+      def self.temp_directory
+        tempfile = Tempfile.new('fake')
+        File.dirname(tempfile.path)
       end
     end
   end
