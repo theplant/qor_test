@@ -3,6 +3,7 @@ require "optparse"
 module Qor
   module Test
     class CLI
+      BUNDLER_ENV_VARS = %w(RUBYOPT BUNDLE_PATH BUNDLE_BIN_PATH BUNDLE_GEMFILE).freeze
       attr_accessor :options
 
       def initialize(options={})
@@ -11,13 +12,27 @@ module Qor
 
       def run
         gemfiles = Qor::Test::Bundler.new(options).generate_gemfiles
-
         gemfiles.map do |gemfile|
-          ["bundle update --gemfile='#{gemfile}'", "BUNDLE_GEMFILE=#{gemfile} #{options[:command]}\n\n"].map do |command|
-            puts command
-            system command
+          with_clean_gemfile(gemfile) do
+            ["bundle update", "#{options[:command]}\n\n"].map do |command|
+              puts ">> #{command}"
+              system(command)
+            end
           end
         end
+      end
+
+      def with_clean_gemfile(gemfile)
+        original_env = {}
+        BUNDLER_ENV_VARS.each do |key|
+          original_env[key] = ENV[key]
+          ENV[key] = nil
+        end
+
+        ENV['BUNDLE_GEMFILE'] = gemfile
+        yield
+      ensure
+        original_env.each { |key, value| ENV[key] = value }
       end
 
       def self.option_parser
