@@ -25,7 +25,11 @@ module Qor
       end
 
       def has_gemspec?
-        [Qor::Test::Configuration.gemspecs, Qor::Test::Gemfile.gemspecs].flatten.compact.length > 0
+        [Qor::Test::Configuration.gemspecs(options), Qor::Test::Gemfile.gemspecs(options)].flatten.compact.length > 0
+      end
+
+      def sources
+        [Qor::Test::Configuration.sources(options), Qor::Test::Gemfile.sources(options)].flatten.compact
       end
 
       def generate_gemfiles
@@ -47,7 +51,11 @@ module Qor
           end
 
           file = File.new(File.join(gemfile_dir, "Gemfile.#{t}"), "w+")
-          file << "gemspec" if has_gemspec?
+          # Add sources
+          file << sources.map { |source| "source #{source.value.inspect}\n" }.uniq.join("")
+          # Add gemspec
+          file << "gemspec\n" if has_gemspec?
+          # Add gems
           file << gems.map(&:to_s).join("\n")
           file.close
           file.path
