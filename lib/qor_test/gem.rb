@@ -17,7 +17,7 @@ module Qor
       def to_s
         if gem_option.is_a?(Array) && gem_option.length > 0
           %{gem "#{name}", #{gem_option.map(&:inspect).join(", ")}}
-        elsif !gem_option.is_a?(Array)
+        elsif !gem_option.nil? && !gem_option.is_a?(Array)
           %{gem "#{name}", #{gem_option.inspect}}
         elsif options.is_a?(Hash)
           %{gem "#{name}", #{options.inspect}}
