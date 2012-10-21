@@ -24,8 +24,8 @@ module Qor
         end
       end
 
-      def has_gemspec?
-        [Qor::Test::Configuration.gemspecs(options), Qor::Test::Gemfile.gemspecs(options)].flatten.compact.length > 0
+      def gemspecs
+        [Qor::Test::Configuration.gemspecs(options), Qor::Test::Gemfile.gemspecs(options)].flatten.compact
       end
 
       def sources
@@ -54,7 +54,9 @@ module Qor
           # Add sources
           file << sources.map { |source| "source #{source.value.inspect}\n" }.uniq.join("")
           # Add gemspec
-          file << "gemspec\n" if has_gemspec?
+          file << gemspecs.map do |gemspec|
+            "gemspec #{gemspec.value.nil? ? '' : gemspec.value.inspect.gsub(/^\{|\}$/,'')}\n"
+          end.uniq.join("")
           # Add gems
           file << gems.map(&:to_s).join("\n")
           file.close
