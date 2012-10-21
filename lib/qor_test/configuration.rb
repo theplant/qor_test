@@ -19,6 +19,12 @@ module Qor
           n.parent.root? || ((n.parent.config_name == :env) && n.parent.name.to_s == (options[:env] || 'default'))
         end
       end
+
+      def self.gemspecs(options={})
+        deep_find(:gemspec) do |n|
+          n.parent.root? || ((n.parent.config_name == :env) && n.parent.name.to_s == (options[:env] || 'default'))
+        end
+      end
     end
 
     class Gemfile
@@ -44,6 +50,12 @@ module Qor
 
       def self.gems(options={})
         deep_find(:gem) do |n|
+          n.parent.root? || (n.parent.config_name != :group) || (n.parent.name.to_s == 'test')
+        end
+      end
+
+      def self.gemspecs(options={})
+        deep_find(:gemspec) do |n|
           n.parent.root? || (n.parent.config_name != :group) || (n.parent.name.to_s == 'test')
         end
       end

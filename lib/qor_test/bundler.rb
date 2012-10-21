@@ -24,6 +24,10 @@ module Qor
         end
       end
 
+      def has_gemspec?
+        [Qor::Test::Configuration.gemspecs, Qor::Test::Gemfile.gemspecs].flatten.compact.length > 0
+      end
+
       def generate_gemfiles
         gems_set  = gems_set_from_config
         gems_hash = gems_hash_from_gemfile
@@ -43,6 +47,7 @@ module Qor
           end
 
           file = File.new(File.join(gemfile_dir, "Gemfile.#{t}"), "w+")
+          file << "gemspec" if has_gemspec?
           file << gems.map(&:to_s).join("\n")
           file.close
           file.path
