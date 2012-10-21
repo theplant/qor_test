@@ -46,6 +46,10 @@ module Qor
         node :gem
       end
 
+      node :platforms do
+        node :gem
+      end
+
       node :path do
         node :gem
       end
