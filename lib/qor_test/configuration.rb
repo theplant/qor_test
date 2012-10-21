@@ -13,6 +13,12 @@ module Qor
         node :gem
         node :ruby
       end
+
+      def self.gems(options={})
+        deep_find(:gem) do |n|
+          n.parent.root? || ((n.parent.config_name == :env) && n.parent.name.to_s == (options[:env] || 'default'))
+        end
+      end
     end
 
     class Gemfile
@@ -34,6 +40,12 @@ module Qor
 
       node :group do
         node :gem
+      end
+
+      def self.gems(options={})
+        deep_find(:gem) do |n|
+          n.parent.root? || (n.parent.config_name != :group) || (n.parent.name.to_s == 'test')
+        end
       end
     end
   end

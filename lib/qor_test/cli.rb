@@ -13,8 +13,10 @@ module Qor
         gemfiles = Qor::Test::Bundler.new(options).generate_gemfiles
 
         gemfiles.map do |gemfile|
-          system("bundle install --gemfile='#{gemfile}'")
-          system("BUNDLE_GEMFILE=#{gemfile} #{options[:command]}")
+          ["bundle update --gemfile='#{gemfile}'", "BUNDLE_GEMFILE=#{gemfile} #{options[:command]}\n\n"].map do |command|
+            puts command
+            system command
+          end
         end
       end
 
