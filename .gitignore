@@ -17,3 +17,4 @@ test/version_tmp
 test/example_test.rb
 tmp
 config
+QorTest*

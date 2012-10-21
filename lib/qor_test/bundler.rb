@@ -32,6 +32,10 @@ module Qor
         gems_name = gems_hash.keys
         gemfile_length = [gems_set.length, 1].max
 
+        tempfile = Tempfile.new('fake')
+        gemfile_dir = File.join(File.dirname(tempfile.path), "qor_test-tmp-#{Time.now.to_i}")
+        FileUtils.mkdir_p(gemfile_dir)
+
         filenames = (0...gemfile_length).map do |t|
           gems = []
           gem_names = gems_set[t].map(&:name)
@@ -41,7 +45,7 @@ module Qor
             gems << (gems_set[t].select {|g| g.name == name}[0] || gems_hash[name])
           end
 
-          file = Tempfile.new('Gemfile')
+          file = File.new(File.join(gemfile_dir, "Gemfile.#{t}"), "w+")
           file << gems.map(&:to_s).join("\n")
           file.close
           file.path

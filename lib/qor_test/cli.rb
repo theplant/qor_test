@@ -1,4 +1,5 @@
 require "optparse"
+require "fileutils"
 
 module Qor
   module Test
@@ -12,12 +13,22 @@ module Qor
 
       def run
         gemfiles = Qor::Test::Bundler.new(options).generate_gemfiles
+
+        puts ">> Generated #{gemfiles.count} Gemfile\n\n"
+
         gemfiles.map do |gemfile|
-          with_clean_gemfile(gemfile) do
-            ["bundle update", "#{options[:command]}\n\n"].map do |command|
-              puts ">> #{command}"
-              system(command)
+          begin
+            new_gemfile = "QorTest_" + File.basename(gemfile)
+            FileUtils.cp(gemfile, new_gemfile)
+            with_clean_gemfile(new_gemfile) do
+              puts ">> Using Gemfile #{gemfile}"
+              ["bundle update", "#{options[:command]}\n\n"].map do |command|
+                puts ">> #{command}"
+                system(command)
+              end
             end
+          ensure
+            FileUtils.rm(new_gemfile)
           end
         end
       end
