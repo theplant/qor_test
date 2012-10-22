@@ -22,10 +22,10 @@ module Qor
             new_gemfile = "QorTest_" + File.basename(gemfile)
             FileUtils.cp(gemfile, new_gemfile)
             with_clean_gemfile(new_gemfile) do
-              puts ">> Using Gemfile #{gemfile}"
+              puts ">> BUNDLE_GEMFILE=#{gemfile}"
               ["bundle update", "#{options[:command]}\n\n"].map do |command|
                 puts ">> #{command}"
-                system(command)
+                system(command) unless options[:pretend]
               end
             end
           ensure
@@ -59,10 +59,14 @@ module Qor
             options[:command] = command
           end
 
-          opts.on( '-C', '--clean', 'Clean old temp files') do |command|
+          opts.on( '-C', '--clean', 'Clean old temp files') do
             puts "Cleaning temp files..."
             FileUtils.rm_rf(Dir[File.join(temp_directory, "qor_test-tmp-*")])
             exit
+          end
+
+          opts.on( '-p', '--pretend', 'Skip run command, only generate Gemfiles') do
+            options[:pretend] = true
           end
 
           opts.on( '-h', '--help', 'Display this help') do
