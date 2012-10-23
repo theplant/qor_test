@@ -32,6 +32,8 @@ module Qor
             FileUtils.rm(new_gemfile)
           end
         end
+      rescue Qor::Dsl::ConfigurationNotFound
+        puts "ConfigurationNotFound, please run `qor_test --init` in project's root to get a sample configuration"
       end
 
       def with_clean_gemfile(gemfile)
@@ -69,6 +71,11 @@ module Qor
             options[:pretend] = true
           end
 
+          opts.on( '-i', '--init', 'Create sample configuration') do
+            copy_sample_configuration
+            exit
+          end
+
           opts.on( '-h', '--help', 'Display this help') do
             puts opts
             exit
@@ -86,6 +93,14 @@ module Qor
       def self.temp_directory
         tempfile = Tempfile.new('fake')
         File.dirname(tempfile.path)
+      end
+
+      def self.copy_sample_configuration
+        sample_config = File.expand_path("#{File.dirname(__FILE__)}/../../config/qor/test.rb")
+        config_path = "config/qor/test.rb"
+        FileUtils.mkdir_p(File.dirname(config_path))
+        FileUtils.cp(sample_config, config_path)
+        puts("Copied sample configuration to #{config_path}!")
       end
     end
   end
