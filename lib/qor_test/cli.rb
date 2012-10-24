@@ -96,11 +96,9 @@ module Qor
       end
 
       def self.copy_sample_configuration
-        sample_config = File.expand_path("#{File.dirname(__FILE__)}/../../config/qor/test.rb")
-        config_path = "config/qor/test.rb"
-        FileUtils.mkdir_p(File.dirname(config_path))
-        FileUtils.cp(sample_config, config_path)
-        puts("Copied sample configuration to #{config_path}!")
+        FileUtils.mkdir_p(File.dirname(Qor::Test::Configuration.config_path))
+        FileUtils.cp(Qor::Test::Configuration.sample_file, Qor::Test::Configuration.config_path)
+        puts("Copied sample configuration to #{Qor::Test::Configuration.config_path}!")
       end
     end
   end
