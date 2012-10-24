@@ -28,12 +28,11 @@ module Qor
           gems_from_config[name] || gems_from_gemfile[name]
         end.compact
 
-        file = File.new(filename, "w+")
-        file << Qor::Test::Configuration.combined_sources(options)
-        file << Qor::Test::Configuration.combined_gemspecs(options)
-        file << gems.map(&:to_s).join("\n")
-        file.close
-        file.path
+        File.open(filename, "w+") do |f|
+          f << Qor::Test::Configuration.combined_sources(options)
+          f << Qor::Test::Configuration.combined_gemspecs(options)
+          f << gems.map(&:to_s).join("\n")
+        end.path
       end
     end
   end

@@ -20,7 +20,7 @@ OptionParser.new do |opts|
 
   opts.on( '-C', '--clean', 'Clean old temp files') do
     puts "Cleaning temp files..."
-    FileUtils.rm_rf(Dir[File.join(Qor::Test::CLI.temp_directory, "qor_test-tmp-*")])
+    FileUtils.rm_rf(Dir[File.join(Qor::Test::CLI.temp_directory, "qor_test-gemfiles-*")])
     exit
   end
 

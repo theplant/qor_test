@@ -24,7 +24,7 @@ module Qor
       end
 
       def self.gemfile_path
-        [ENV['QOR_TEST_GEMFILE'], ENV['BUNDLE_GEMFILE'], 'Gemfile'].select {|x| File.exist?(x.to_s)}[0]
+        [ENV['QOR_TEST_GEMFILE'], ENV['BUNDLE_GEMFILE'], 'Gemfile'].detect {|x| File.exist?(x.to_s)}
       end
 
       def self.root_from_config
@@ -37,9 +37,8 @@ module Qor
 
       def self.find_block(options={})
         lambda do |node|
-          node.parent.root? ||
-            ((node.parent.config_name == :env) && node.parent.name.to_s == (options[:env] || 'default')) ||
-            ((node.parent.config_name == :group) && node.parent.name.to_s == 'test')
+          parent = node.parent
+          parent.root? || parent.is_node?(:env, options[:env] || 'default') || parent.is_node?(:group, 'test')
         end
       end
 
@@ -70,18 +69,21 @@ module Qor
           sum
         end.values
 
-        gems_set = all_gems[0].product(*all_gems[1..-1]) rescue []
-        gems_set.map do |gems|
-          gems.inject({}) do |sum, gem|
-            sum[gem.name.to_s] = gem
-            sum
-          end
-        end
+        gems_set = all_gems.length > 0 ? all_gems[0].product(*all_gems[1..-1]) : []
+        gems_set.map { |gems| gems_to_hash(gems) }
       end
 
       def self.gems_hash_from_gemfile(options={})
-        root_from_gemfile.deep_find(:gem, &find_block(options)).inject({}) do |sum, node|
-          sum[node.name.to_s] = Qor::Test::Gem.parse(node)[0]
+        gems = root_from_gemfile.deep_find(:gem, &find_block(options)).map do |node| 
+          Qor::Test::Gem.parse(node)[0]
+        end
+        gems_to_hash(gems)
+      end
+
+      private
+      def self.gems_to_hash(gems)
+        gems.inject({}) do |sum, gem|
+          sum[gem.name.to_s] = gem
           sum
         end
       end

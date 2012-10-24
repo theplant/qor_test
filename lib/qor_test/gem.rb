@@ -7,9 +7,9 @@ module Qor
         self.name = node.name.to_s
         self.gem_option = gem_option
 
-        [:git, :path, :platforms].map do |x|
-          if node.parent.config_name.to_sym == x
-            self.options = {x => node.parent.value}.merge(node.parent.options)
+        [:git, :path, :platforms].map do |type|
+          if node.parent.is_node?(type)
+            self.options = {type => node.parent.value}.merge(node.parent.options)
           end
         end
       end
