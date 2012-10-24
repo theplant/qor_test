@@ -7,5 +7,41 @@ $:.unshift File.expand_path("../../lib", bin_file)
 
 require "qor_test"
 
-options = Qor::Test::CLI.option_parser
+options = {}
+
+OptionParser.new do |opts|
+  opts.on( '-e', '--env env', 'Test Env') do |env|
+    options[:env] = env
+  end
+
+  opts.on( '-c', '--command command', 'Command') do |command|
+    options[:command] = command
+  end
+
+  opts.on( '-C', '--clean', 'Clean old temp files') do
+    puts "Cleaning temp files..."
+    FileUtils.rm_rf(Dir[File.join(Qor::Test::CLI.temp_directory, "qor_test-tmp-*")])
+    exit
+  end
+
+  opts.on( '-p', '--pretend', 'Skip run command, only generate Gemfiles') do
+    options[:pretend] = true
+  end
+
+  opts.on( '-i', '--init', 'Create sample configuration') do
+    Qor::Test::CLI.copy_sample_configuration
+    exit
+  end
+
+  opts.on( '-h', '--help', 'Display this help') do
+    puts opts
+    exit
+  end
+
+  opts.on( '-v', '--version', 'Show version number') do |version|
+    puts "Version: #{Qor::Test::VERSION}"
+    exit
+  end
+end.parse!
+
 Qor::Test::CLI.new(options).run

@@ -14,80 +14,42 @@ module Qor
 
       def run
         gemfiles = Qor::Test::Bundler.new(options).generate_gemfiles
-
         puts ">> Generated #{gemfiles.count} Gemfile\n\n"
 
         gemfiles.map do |gemfile|
-          begin
-            new_gemfile = "QorTest_" + File.basename(gemfile)
-            FileUtils.cp(gemfile, new_gemfile)
-            with_clean_gemfile(new_gemfile) do
-              puts ">> BUNDLE_GEMFILE=#{gemfile}"
-              ["bundle update", "#{options[:command]}\n\n"].map do |command|
-                puts ">> #{command}"
-                system(command) unless options[:pretend]
-              end
-            end
-          ensure
-            FileUtils.rm(new_gemfile)
-          end
+          run_with_gemfile(gemfile)
         end
       rescue Qor::Dsl::ConfigurationNotFound
         puts "ConfigurationNotFound, please run `qor_test --init` in project's root to get a sample configuration"
       end
 
-      def with_clean_gemfile(gemfile)
+      def run_with_gemfile(gemfile)
+        temp_gemfile = "QorTest_" + File.basename(gemfile)
+        FileUtils.cp(gemfile, temp_gemfile)
+
+        with_clean_env(temp_gemfile) do
+          puts ">> BUNDLE_GEMFILE=#{gemfile}"
+
+          ["bundle update", "#{options[:command]}\n\n"].map do |command|
+            puts ">> #{command}"
+            system(command) unless options[:pretend]
+          end
+        end
+      ensure
+        FileUtils.rm(temp_gemfile)
+      end
+
+      def with_clean_env(gemfile)
         original_env = {}
+
         BUNDLER_ENV_VARS.each do |key|
-          original_env[key] = ENV[key]
-          ENV[key] = nil
+          original_env[key], ENV[key] = ENV[key], nil
         end
 
         ENV['BUNDLE_GEMFILE'] = gemfile
         yield
       ensure
         original_env.each { |key, value| ENV[key] = value }
-      end
-
-      def self.option_parser
-        options = {}
-
-        OptionParser.new do |opts|
-          opts.on( '-e', '--env env', 'Test Env') do |env|
-            options[:env] = env
-          end
-
-          opts.on( '-c', '--command command', 'Command') do |command|
-            options[:command] = command
-          end
-
-          opts.on( '-C', '--clean', 'Clean old temp files') do
-            puts "Cleaning temp files..."
-            FileUtils.rm_rf(Dir[File.join(temp_directory, "qor_test-tmp-*")])
-            exit
-          end
-
-          opts.on( '-p', '--pretend', 'Skip run command, only generate Gemfiles') do
-            options[:pretend] = true
-          end
-
-          opts.on( '-i', '--init', 'Create sample configuration') do
-            copy_sample_configuration
-            exit
-          end
-
-          opts.on( '-h', '--help', 'Display this help') do
-            puts opts
-            exit
-          end
-
-          opts.on( '-v', '--version', 'Show version number') do |version|
-            puts "Version: #{Qor::Test::VERSION}"
-            exit
-          end
-        end.parse!
-
-        options
       end
 
       def self.temp_directory
