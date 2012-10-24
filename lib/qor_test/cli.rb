@@ -13,7 +13,7 @@ module Qor
       end
 
       def run
-        gemfiles = Qor::Test::Bundler.new(options).generate_gemfiles
+        gemfiles = Qor::Test::Gemfile.new(options).generate_gemfiles
         puts ">> Generated #{gemfiles.count} Gemfile\n\n"
 
         gemfiles.map do |gemfile|
