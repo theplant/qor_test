@@ -64,13 +64,19 @@ module Qor
       end
 
       def self.gems_set_from_config(options={})
-        gems = root_from_config.deep_find(:gem, &find_block(options)).inject({}) do |sum, node|
+        all_gems = root_from_config.deep_find(:gem, &find_block(options)).inject({}) do |sum, node|
           sum[node.name] ||= []
           sum[node.name].concat Qor::Test::Gem.parse(node)
           sum
         end.values
 
-        gems.length > 0 ? gems[0].product(*gems[1..-1]) : []
+        gems_set = all_gems[0].product(*all_gems[1..-1]) rescue []
+        gems_set.map do |gems|
+          gems.inject({}) do |sum, gem|
+            sum[gem.name.to_s] = gem
+            sum
+          end
+        end
       end
 
       def self.gems_hash_from_gemfile(options={})
