@@ -17,7 +17,7 @@ module Qor
 
         (0...gemfile_length).map do |index|
           filename = File.join(gemfile_dir, "Gemfile.#{index}")
-          write_gemfile(gems_set_from_config[index], gems_hash_from_gemfile, filename)
+          write_gemfile(gems_set_from_config[index] || {}, gems_hash_from_gemfile, filename)
         end
       end
 

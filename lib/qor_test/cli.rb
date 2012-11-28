@@ -30,13 +30,18 @@ module Qor
         with_clean_env(temp_gemfile) do
           puts ">> BUNDLE_GEMFILE=#{gemfile}"
 
-          ["bundle update", "#{options[:command]}\n\n"].map do |command|
+          [
+            "bundle install",
+            "#{options[:command]}\n\n".sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')
+          ].map do |command|
             puts ">> #{command}"
             system(command) unless options[:pretend]
           end
         end
       ensure
-        FileUtils.rm(temp_gemfile)
+        [temp_gemfile, "#{temp_gemfile}.lock"].map do |file|
+          FileUtils.rm(file) if File.exist?(file)
+        end
       end
 
       def with_clean_env(gemfile)
