@@ -24,8 +24,12 @@ module Qor
       end
 
       def run_with_gemfile(gemfile)
+        gemfile_lock = "#{gemfile}.lock"
         temp_gemfile = "QorTest_" + File.basename(gemfile)
+        temp_gemfile_lock = "#{temp_gemfile}.lock"
+
         FileUtils.cp(gemfile, temp_gemfile)
+        FileUtils.cp(gemfile_lock, temp_gemfile_lock) if File.exist?(gemfile_lock)
 
         with_clean_env(temp_gemfile) do
           puts ">> BUNDLE_GEMFILE=#{gemfile}"
@@ -39,7 +43,8 @@ module Qor
           end
         end
       ensure
-        [temp_gemfile, "#{temp_gemfile}.lock"].map do |file|
+        FileUtils.cp(temp_gemfile_lock, gemfile_lock) if File.exist?(temp_gemfile_lock)
+        [temp_gemfile, temp_gemfile_lock].map do |file|
           FileUtils.rm(file) if File.exist?(file)
         end
       end
