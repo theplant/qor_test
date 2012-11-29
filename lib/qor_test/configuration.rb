@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 module Qor
   module Test
     class Configuration
@@ -19,12 +21,17 @@ module Qor
         "config/qor/test.rb"
       end
 
-      def self.sample_file
-        File.expand_path("#{File.dirname(__FILE__)}/../../config/qor/test.rb")
-      end
-
       def self.gemfile_path
         [ENV['QOR_TEST_GEMFILE'], ENV['BUNDLE_GEMFILE'], 'Gemfile'].detect {|x| File.exist?(x.to_s)}
+      end
+
+      def self.configuration_digest
+        hexdigest = Digest::MD5.hexdigest(File.read(config_path) + File.read(gemfile_path))
+        "qor_test-gemfiles-#{hexdigest}"
+      end
+
+      def self.sample_file
+        File.expand_path("#{File.dirname(__FILE__)}/../../config/qor/test.rb")
       end
 
       def self.root_from_config
@@ -74,7 +81,7 @@ module Qor
       end
 
       def self.gems_hash_from_gemfile(options={})
-        gems = root_from_gemfile.deep_find(:gem, &find_block(options)).map do |node| 
+        gems = root_from_gemfile.deep_find(:gem, &find_block(options)).map do |node|
           Qor::Test::Gem.parse(node)[0]
         end
         gems_to_hash(gems)

@@ -12,12 +12,17 @@ module Qor
         gems_hash_from_gemfile = Qor::Test::Configuration.gems_hash_from_gemfile(options)
         gemfile_length = [gems_set_from_config.length, 1].max
 
-        gemfile_dir = File.join(Qor::Test::CLI.temp_directory, "qor_test-gemfiles-#{Time.now.to_i}")
-        FileUtils.mkdir_p(gemfile_dir)
+        gemfile_dir = File.join(Qor::Test::CLI.temp_directory, Qor::Test::Configuration.configuration_digest)
 
-        (0...gemfile_length).map do |index|
-          filename = File.join(gemfile_dir, "Gemfile.#{index}")
-          write_gemfile(gems_set_from_config[index] || {}, gems_hash_from_gemfile, filename)
+        if File.exist?(gemfile_dir)
+          Dir[File.join(gemfile_dir, '*')].select {|x| x !~ /.lock$/ }
+        else
+          FileUtils.mkdir_p(gemfile_dir)
+
+          (0...gemfile_length).map do |index|
+            filename = File.join(gemfile_dir, "Gemfile.#{index}")
+            write_gemfile(gems_set_from_config[index] || {}, gems_hash_from_gemfile, filename)
+          end
         end
       end
 
