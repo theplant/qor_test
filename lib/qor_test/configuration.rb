@@ -49,6 +49,11 @@ module Qor
         end
       end
 
+      def self.ruby_versions(options)
+        ruby_versions = [root_from_config, root_from_gemfile].map {|x| x.deep_find('ruby', &find_block(options)) }
+        ruby_versions.flatten.compact.map(&:value)
+      end
+
       {:gemspecs => :gemspec, :sources => :source}.map do |key, value|
         self.class.class_eval do
           define_method key do |options|

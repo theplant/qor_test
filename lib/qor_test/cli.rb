@@ -13,11 +13,16 @@ module Qor
       end
 
       def run
-        gemfiles = Qor::Test::Gemfile.new(options).generate_gemfiles
+        gemfile = Qor::Test::Gemfile.new(options)
+        gemfiles = gemfile.generate_gemfiles
         puts ">> Generated #{gemfiles.count} Gemfile\n\n"
 
-        gemfiles.map do |gemfile|
-          run_with_gemfile(gemfile)
+        gemfile.ruby_versions.map do |version|
+          Qor::Test::Ruby.run_with_version(version) do
+            gemfiles.map do |gemfile|
+              run_with_gemfile(gemfile)
+            end
+          end
         end
       rescue Qor::Dsl::ConfigurationNotFound
         puts "ConfigurationNotFound, please run `qor_test --init` in project's root to get a sample configuration"

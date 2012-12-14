@@ -7,6 +7,11 @@ module Qor
         self.options = options
       end
 
+      def ruby_versions
+        versions = Qor::Test::Configuration.ruby_versions(options)
+        versions.empty? ? [RUBY_VERSION] : versions
+      end
+
       def generate_gemfiles
         gems_set_from_config = Qor::Test::Configuration.gems_set_from_config(options)
         gems_hash_from_gemfile = Qor::Test::Configuration.gems_hash_from_gemfile(options)
