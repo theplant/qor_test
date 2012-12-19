@@ -24,12 +24,12 @@ module Qor
       end
 
       def run
-        case_num = 0
         rubies.map do |version|
           scripts << Qor::Test::Rubies.switch_ruby_version(version)
           gemfiles.map do |file|
             $case_num += 1
-            scripts << "echo '\n\e[01;31m[ENV #{gemfile.group_name}] \e[0m\e[31mRunning case #{$case_num} with ruby #{version}, '$[$total_cases_num-#{$case_num}]' cases left\e[0m'"
+            scripts << "echo -n '\n\e[01;31m[ENV #{gemfile.group_name}] \e[0m'"
+            scripts << "echo -n '\e[31mRunning case #{$case_num} with ruby #{version}, '$[$total_cases_num-#{$case_num}]' cases left\e[0m\n'"
             run_with_gemfile(file)
           end
         end
