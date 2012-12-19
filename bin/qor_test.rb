@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-require "pathname"
-bin_file = Pathname.new(__FILE__).realpath
-$:.unshift File.expand_path("../../lib", bin_file)
+require "optparse"
 
+$:.unshift File.expand_path("../../lib", __FILE__)
 require "qor_test"
 
 options = {}

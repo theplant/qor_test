@@ -1,6 +1,6 @@
 module Qor
   module Test
-    class Ruby
+    class Rubies
       class << self
 
         def rvm?
@@ -24,7 +24,9 @@ module Qor
         end
 
         def matched_version(version)
-          versions.select {|x| x =~ Regexp.new(version) }[-1]
+          result = versions.select {|x| x =~ Regexp.new(version) }[-1]
+          puts("ruby '#{version}' is not installed! please install it first!") && exit unless result
+          result
         end
 
         def switch_ruby_version(version)

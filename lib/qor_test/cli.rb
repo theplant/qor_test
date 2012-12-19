@@ -1,4 +1,3 @@
-require "optparse"
 require 'tempfile'
 require "fileutils"
 
@@ -12,35 +11,51 @@ module Qor
         self.scripts = []
       end
 
+      def gemfile
+        @gemfile ||= Qor::Test::Gemfile.new(options)
+      end
+
+      def gemfiles
+        @gemfiles ||= gemfile.generate_gemfiles
+      end
+
+      def rubies
+        gemfile.ruby_versions
+      end
+
+      def write_scripts
+        puts scripts.compact.join("\n")
+      end
+
       def run
-        gemfile = Qor::Test::Gemfile.new(options)
-        gemfiles = gemfile.generate_gemfiles
         puts ">> Generated #{gemfiles.count} Gemfile\n\n"
 
-        gemfile.ruby_versions.map do |version|
-          scripts << Qor::Test::Ruby.switch_ruby_version(version)
+        rubies.map do |version|
+          scripts << "\necho 'Runing with ruby #{version}'"
+          scripts << Qor::Test::Rubies.switch_ruby_version(version)
           gemfiles.map do |gemfile|
             run_with_gemfile(gemfile)
           end
         end
-
-        puts scripts.compact.join("\n")
-
+        write_scripts
       rescue Qor::Dsl::ConfigurationNotFound
         puts "ConfigurationNotFound, please run `qor_test --init` in project's root to get a sample configuration"
       end
 
-      def run_with_gemfile(gemfile)
-        gemfile_lock = "#{gemfile}.lock"
-        temp_gemfile = "QorTest_" + File.basename(gemfile)
-        temp_gemfile_lock = "#{temp_gemfile}.lock"
+      def run_with_gemfile(file)
+        lock_file = "#{file}.lock"
+        temp_file = "QorTest_" + File.basename(file)
+        temp_lock = "#{temp_file}.lock"
 
-        scripts << "cp '#{gemfile}' '#{temp_gemfile}'"
-        scripts << "[ -f '#{gemfile_lock}' ] && cp '#{gemfile_lock}' '#{temp_gemfile_lock}'"
+        # Copy Gemfile and Gemfile.lock if exist
+        scripts << "cp '#{file}' '#{temp_file}'"
+        scripts << "[ -f '#{lock_file}' ] && cp '#{lock_file}' '#{temp_lock}'"
 
-        scripts << "echo '>> BUNDLE_GEMFILE=#{gemfile}'"
-        scripts << "export BUNDLE_GEMFILE=#{temp_gemfile}"
+        # Export Gemfile
+        scripts << "echo '>> BUNDLE_GEMFILE=#{file}'"
+        scripts << "export BUNDLE_GEMFILE=#{temp_file}"
 
+        # Test commands. 1, bundle install, 2, rake test
         [
           "bundle install",
           "#{options[:command]}".sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')
@@ -49,8 +64,9 @@ module Qor
           scripts << command unless options[:pretend]
         end
 
-        scripts << "[ -f '#{temp_gemfile_lock}' ] && cp '#{temp_gemfile_lock}' '#{gemfile_lock}'"
-        [temp_gemfile, temp_gemfile_lock].map do |file|
+        # Backup & Cleanup
+        scripts << "[ -f '#{temp_lock}' ] && cp '#{temp_lock}' '#{lock_file}'"
+        [temp_file, temp_lock].map do |file|
           scripts << "[ -f '#{file}' ] && rm '#{file}'"
         end
       end
@@ -67,7 +83,9 @@ module Qor
       end
 
       def self.init
-        system "sudo ln -nfs #{File.expand_path("../../../shell/qor_test", __FILE__)} /usr/bin/"
+        command = "sudo ln -nfs #{File.expand_path("../../../shell/qor_test", __FILE__)} /usr/bin/"
+        puts command
+        system command
       end
     end
   end
