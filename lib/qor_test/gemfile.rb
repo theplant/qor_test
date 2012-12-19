@@ -21,7 +21,7 @@ module Qor
         gems_hash_from_gemfile = Qor::Test::Configuration.gems_hash_from_gemfile(options)
         gemfile_length = [gems_set_from_config.length, 1].max
 
-        gemfile_dir = File.join(Qor::Test::CLI.temp_directory, Qor::Test::Configuration.configuration_digest)
+        gemfile_dir = File.join(Qor::Test::CLI.temp_directory, Qor::Test::Configuration.configuration_digest(options))
 
         if File.exist?(gemfile_dir)
           Dir[File.join(gemfile_dir, '*')].select {|x| x !~ /.lock$/ }

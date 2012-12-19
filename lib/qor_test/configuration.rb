@@ -25,8 +25,8 @@ module Qor
         [ENV['QOR_TEST_GEMFILE'], ENV['BUNDLE_GEMFILE'], 'Gemfile'].detect {|x| File.exist?(x.to_s)}
       end
 
-      def self.configuration_digest
-        hexdigest = Digest::MD5.hexdigest(File.read(config_path) + File.read(gemfile_path))
+      def self.configuration_digest(options={})
+        hexdigest = Digest::MD5.hexdigest(options.inspect + File.read(config_path) + File.read(gemfile_path))
         "qor_test-gemfiles-#{hexdigest}"
       end
 
