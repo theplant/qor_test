@@ -20,15 +20,11 @@
       gem  'rails', ['3.1', '3.2']
     end
 
-  test/test_helper.rb
-
-    load_dummy_rails_env #:models_path => [], :migrations_path => []
-
-
   Run:
 
-    qor_test -e default -c 'ruby test/xxxx'
-    qor_test -e 1.8.7 -c 'rake test'
+    qor_test
+    COMMAND='ruby test/xxxx' qor_test -e default
+    COMMAND='rake test' qor_test -e 1.8.7
 
 ## Contributing
 
