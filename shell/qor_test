@@ -2,5 +2,5 @@
 
 export QOR_TEST_SCRIPT_FILE=$(mktemp /tmp/qor_test-gemfiles-scripts-XXXXXXXXXX)
 qor_test.rb $*
-chmod +x $QOR_TEST_SCRIPT_FILE
-source $QOR_TEST_SCRIPT_FILE
+[ -f $QOR_TEST_SCRIPT_FILE ] && chmod +x $QOR_TEST_SCRIPT_FILE
+[ -f $QOR_TEST_SCRIPT_FILE ] && source $QOR_TEST_SCRIPT_FILE
