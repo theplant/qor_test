@@ -54,8 +54,9 @@ module Qor
         ruby_versions.flatten.compact.map(&:value)
       end
 
-      def self.envs
-        root_from_config.deep_find('env').map(&:value)
+      def self.envs(options={})
+        envs = root_from_config.deep_find('env').map(&:value)
+        options[:env] ? envs.select {|x| x == options[:env]} : envs
       end
 
       {:gemspecs => :gemspec, :sources => :source}.map do |key, value|

@@ -23,27 +23,17 @@ module Qor
         gemfile.ruby_versions
       end
 
-      def write_scripts
-        File.open(ENV['QOR_TEST_SCRIPT_FILE'], 'w+') do |f|
-          f << scripts.compact.join("\n")
-        end
-      end
-
       def run
-        scripts << "echo 'Generated #{gemfiles.count} Gemfile, Running with ruby #{rubies}'"
-
         case_num = 0
         rubies.map do |version|
           scripts << Qor::Test::Rubies.switch_ruby_version(version)
-          gemfiles.map do |gemfile|
-            case_num += 1
-            scripts << "echo '\n\n\e[01;31mRunning case #{case_num} with ruby #{version}, '$[$total_cases_num-#{case_num}]' cases left\n\e[0m'"
-            run_with_gemfile(gemfile)
+          gemfiles.map do |file|
+            $case_num += 1
+            scripts << "echo '\n\e[01;31m[ENV #{gemfile.group_name}] \e[0m\e[31mRunning case #{$case_num} with ruby #{version}, '$[$total_cases_num-#{$case_num}]' cases left\e[0m'"
+            run_with_gemfile(file)
           end
         end
-        scripts.unshift "total_cases_num=#{case_num}"
-
-        write_scripts
+        self
       rescue Qor::Dsl::ConfigurationNotFound
         puts "ConfigurationNotFound, please run `qor_test --init` in project's root to get a sample configuration"
       end
