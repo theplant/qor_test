@@ -54,6 +54,10 @@ module Qor
         ruby_versions.flatten.compact.map(&:value)
       end
 
+      def self.envs
+        root_from_config.deep_find('env').map(&:value)
+      end
+
       {:gemspecs => :gemspec, :sources => :source}.map do |key, value|
         self.class.class_eval do
           define_method key do |options|

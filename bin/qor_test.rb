@@ -5,6 +5,7 @@ require "optparse"
 
 $:.unshift File.expand_path("../../lib", __FILE__)
 require "qor_test"
+require "qor_test/configuration"
 
 options = {}
 
@@ -46,4 +47,9 @@ end.parse!
 
 options[:command] = ENV['COMMAND'] || "rake #{File.exist?('spec') ? 'spec' : 'test'}"
 
-Qor::Test::CLI.new(options).run
+envs = options[:env] ? [options[:env]] : Qor::Test::Configuration.envs
+envs = [nil] if envs.size == 0
+
+envs.map do |env|
+  Qor::Test::CLI.new(options.merge(:env => env)).run
+end
