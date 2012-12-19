@@ -24,7 +24,6 @@ module Qor
       end
 
       def write_scripts
-        puts ENV['QOR_TEST_SCRIPT_FILE']
         File.open(ENV['QOR_TEST_SCRIPT_FILE'], 'w+') do |f|
           f << scripts.compact.join("\n")
         end
@@ -38,7 +37,7 @@ module Qor
           scripts << Qor::Test::Rubies.switch_ruby_version(version)
           gemfiles.map do |gemfile|
             case_num += 1
-            scripts << "echo '\n\nRunning case #{case_num} with ruby #{version}, '$[$total_cases_num-#{case_num}]' cases left\n'"
+            scripts << "echo '\n\n\e[01;31mRunning case #{case_num} with ruby #{version}, '$[$total_cases_num-#{case_num}]' cases left\n\e[0m'"
             run_with_gemfile(gemfile)
           end
         end
