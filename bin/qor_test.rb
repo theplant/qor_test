@@ -14,12 +14,8 @@ OptionParser.new do |opts|
     options[:env] = env
   end
 
-  opts.on( '-c', '--command command', 'Command') do |command|
-    options[:command] = command
-  end
-
-  opts.on( '-C', '--clean', 'Clean old temp files') do
-    puts "Cleaning temp files..."
+  opts.on( '-c', '--clean', 'Clean up temporary files') do
+    puts "Cleaning temporary files..."
     FileUtils.rm_rf(Dir[File.join(Qor::Test::CLI.temp_directory, "qor_test-gemfiles-*")])
     exit
   end
@@ -48,5 +44,7 @@ OptionParser.new do |opts|
     exit
   end
 end.parse!
+
+options[:command] = ENV['COMMAND'] || "rake #{File.exist?('spec') ? 'spec' : 'test'}"
 
 Qor::Test::CLI.new(options).run

@@ -4,11 +4,11 @@ module Qor
       class << self
 
         def rvm?
-          system("which rvm")
+          %x(sh -c "command -v rvm").size > 0
         end
 
         def rbenv?
-          system("which rbenv")
+          %x(sh -c "command -v rbenv").size > 0
         end
 
         def version_manager_installed?
@@ -16,7 +16,7 @@ module Qor
         end
 
         def versions
-          @@versions ||= if rvm?
+          if rvm?
             `rvm list strings`.split("\n")
           elsif rbenv?
             `rbenv versions | cut -d '(' -f1`.split("\n").map {|x| x.sub(/\*/,'') }.map(&:strip)
@@ -29,17 +29,12 @@ module Qor
 
         def switch_ruby_version(version)
           if rvm?
-            "rvm #{matched_version(version)}"
+            "rvm use #{matched_version(version)}"
           elsif rbenv?
-            "rbenv shell #{matched_version(version)}"
+            "export RBENV_VERSION=#{matched_version(version)}"
           end
         end
 
-        def run_with_version(version)
-          #puts switch_ruby_version(matched_version(version))
-          #system switch_ruby_version(matched_version(version))
-          yield
-        end
       end
     end
   end

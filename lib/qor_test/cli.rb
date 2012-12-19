@@ -5,11 +5,11 @@ require "fileutils"
 module Qor
   module Test
     class CLI
-      BUNDLER_ENV_VARS = %w(RUBYOPT BUNDLE_PATH BUNDLE_BIN_PATH BUNDLE_GEMFILE).freeze
-      attr_accessor :options
+      attr_accessor :options, :scripts
 
       def initialize(options={})
         self.options = options
+        self.scripts = []
       end
 
       def run
@@ -18,12 +18,14 @@ module Qor
         puts ">> Generated #{gemfiles.count} Gemfile\n\n"
 
         gemfile.ruby_versions.map do |version|
-          Qor::Test::Ruby.run_with_version(version) do
-            gemfiles.map do |gemfile|
-              run_with_gemfile(gemfile)
-            end
+          scripts << Qor::Test::Ruby.switch_ruby_version(version)
+          gemfiles.map do |gemfile|
+            run_with_gemfile(gemfile)
           end
         end
+
+        puts scripts.compact.join("\n")
+
       rescue Qor::Dsl::ConfigurationNotFound
         puts "ConfigurationNotFound, please run `qor_test --init` in project's root to get a sample configuration"
       end
@@ -33,38 +35,24 @@ module Qor
         temp_gemfile = "QorTest_" + File.basename(gemfile)
         temp_gemfile_lock = "#{temp_gemfile}.lock"
 
-        FileUtils.cp(gemfile, temp_gemfile)
-        FileUtils.cp(gemfile_lock, temp_gemfile_lock) if File.exist?(gemfile_lock)
+        scripts << "cp '#{gemfile}' '#{temp_gemfile}'"
+        scripts << "[ -f '#{gemfile_lock}' ] && cp '#{gemfile_lock}' '#{temp_gemfile_lock}'"
 
-        with_clean_env(temp_gemfile) do
-          puts ">> BUNDLE_GEMFILE=#{gemfile}"
+        scripts << "echo '>> BUNDLE_GEMFILE=#{gemfile}'"
+        scripts << "export BUNDLE_GEMFILE=#{temp_gemfile}"
 
-          [
-            "bundle install",
-            "#{options[:command]}\n\n".sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')
-          ].map do |command|
-            puts ">> #{command}"
-            system(command) unless options[:pretend]
-          end
+        [
+          "bundle install",
+          "#{options[:command]}".sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')
+        ].map do |command|
+          scripts << "echo '>> #{command}'"
+          scripts << command unless options[:pretend]
         end
-      ensure
-        FileUtils.cp(temp_gemfile_lock, gemfile_lock) if File.exist?(temp_gemfile_lock)
+
+        scripts << "[ -f '#{temp_gemfile_lock}' ] && cp '#{temp_gemfile_lock}' '#{gemfile_lock}'"
         [temp_gemfile, temp_gemfile_lock].map do |file|
-          FileUtils.rm(file) if File.exist?(file)
+          scripts << "[ -f '#{file}' ] && rm '#{file}'"
         end
-      end
-
-      def with_clean_env(gemfile)
-        original_env = {}
-
-        BUNDLER_ENV_VARS.each do |key|
-          original_env[key], ENV[key] = ENV[key], nil
-        end
-
-        ENV['BUNDLE_GEMFILE'] = gemfile
-        yield
-      ensure
-        original_env.each { |key, value| ENV[key] = value }
       end
 
       def self.temp_directory
