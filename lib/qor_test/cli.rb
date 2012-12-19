@@ -16,7 +16,7 @@ module Qor
       end
 
       def gemfiles
-        @gemfiles ||= gemfile.generate_gemfiles
+        @gemfiles ||= gemfile.generate_gemfiles.reverse
       end
 
       def rubies
@@ -24,19 +24,26 @@ module Qor
       end
 
       def write_scripts
-        puts scripts.compact.join("\n")
+        puts ENV['QOR_TEST_SCRIPT_FILE']
+        File.open(ENV['QOR_TEST_SCRIPT_FILE'], 'w+') do |f|
+          f << scripts.compact.join("\n")
+        end
       end
 
       def run
-        puts ">> Generated #{gemfiles.count} Gemfile\n\n"
+        scripts << "echo 'Generated #{gemfiles.count} Gemfile, Running with ruby #{rubies}'"
 
+        case_num = 0
         rubies.map do |version|
-          scripts << "\necho 'Runing with ruby #{version}'"
           scripts << Qor::Test::Rubies.switch_ruby_version(version)
           gemfiles.map do |gemfile|
+            case_num += 1
+            scripts << "echo '\n\nRunning case #{case_num} with ruby #{version}, '$[$total_cases_num-#{case_num}]' cases left\n'"
             run_with_gemfile(gemfile)
           end
         end
+        scripts.unshift "total_cases_num=#{case_num}"
+
         write_scripts
       rescue Qor::Dsl::ConfigurationNotFound
         puts "ConfigurationNotFound, please run `qor_test --init` in project's root to get a sample configuration"
@@ -57,7 +64,7 @@ module Qor
 
         # Test commands. 1, bundle install, 2, rake test
         [
-          "bundle install",
+          "bundle install --quiet",
           "#{options[:command]}".sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')
         ].map do |command|
           scripts << "echo '>> #{command}'"
