@@ -77,12 +77,6 @@ module Qor
         FileUtils.cp(Qor::Test::Configuration.sample_file, Qor::Test::Configuration.config_path)
         puts("Copied sample configuration to #{Qor::Test::Configuration.config_path}!")
       end
-
-      def self.init
-        command = "sudo ln -nfs #{File.expand_path("../../../shell/qor_test", __FILE__)} /usr/bin/"
-        puts command
-        system command
-      end
     end
   end
 end

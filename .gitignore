@@ -18,3 +18,4 @@ test/example_test.rb
 tmp
 config
 QorTest*
+Makefile

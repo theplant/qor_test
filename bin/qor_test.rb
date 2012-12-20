@@ -24,11 +24,6 @@ OptionParser.new do |opts|
     options[:pretend] = true
   end
 
-  opts.on( '-i', '--init', 'Init') do
-    Qor::Test::CLI.init
-    exit
-  end
-
   opts.on( '-s', '--sample', 'Create sample configuration') do
     Qor::Test::CLI.copy_sample_configuration
     exit
