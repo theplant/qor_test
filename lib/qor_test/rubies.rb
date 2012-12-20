@@ -24,7 +24,9 @@ module Qor
         end
 
         def matched_version(version)
-          result = versions.select {|x| x =~ Regexp.new(version) }[-1]
+          result = ["^#{version}", version].map do |x|
+            versions.select {|v| v =~ Regexp.new(x) }[-1]
+          end.compact[0]
           not_installed!(version) unless result
           result
         end
