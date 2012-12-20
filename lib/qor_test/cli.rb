@@ -29,7 +29,7 @@ module Qor
           gemfiles.map do |file|
             $case_num += 1
             scripts << "echo -n '\n\e[01;31m[ENV #{gemfile.group_name}] \e[0m'"
-            scripts << "echo -n '\e[31mRunning case #{$case_num} with ruby #{version}, '$[$total_cases_num-#{$case_num}]' cases left\e[0m\n'"
+            scripts << "echo -n '\e[31mRunning case #{$case_num} with ruby '$(ruby -v)', '$[$total_cases_num-#{$case_num}]' cases left\e[0m\n'"
             run_with_gemfile(file)
           end
         end

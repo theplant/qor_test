@@ -25,16 +25,23 @@ module Qor
 
         def matched_version(version)
           result = versions.select {|x| x =~ Regexp.new(version) }[-1]
-          puts("ruby '#{version}' is not installed! please install it first!") && exit unless result
+          not_installed!(version) unless result
           result
         end
 
         def switch_ruby_version(version)
           if rvm?
-            "rvm use #{matched_version(version)}"
+            "[ -f $rvm_path/scripts/rvm ] && source $rvm_path/scripts/rvm; rvm use #{matched_version(version)}"
           elsif rbenv?
             "export RBENV_VERSION=#{matched_version(version)}"
+          elsif (`ruby -v` !~ Regexp.new(version))
+            not_installed!(version)
           end
+        end
+
+        def not_installed!(version)
+          puts "ruby '#{version}' is not installed! please install it first!"
+          exit
         end
 
       end
