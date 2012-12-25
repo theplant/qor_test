@@ -1,4 +1,3 @@
-require 'qor_dsl'
 require 'qor_test/cli'
 require 'qor_test/configuration'
 require 'qor_test/gemfile'

@@ -26,19 +26,17 @@ module Qor
       def run
         rubies.map do |version|
           scripts << Qor::Test::Rubies.switch_ruby_version(version)
-          gemfiles.map do |file|
-            $case_num += 1
-            scripts << "echo -n '\n\e[01;31m[ENV #{gemfile.group_name}] \e[0m'"
-            scripts << "echo -n '\e[31mRunning case #{$case_num} with ruby '$(ruby -v)', '$[$total_cases_num-#{$case_num}]' cases left\e[0m\n'"
-            run_with_gemfile(file)
-          end
+          gemfiles.map { |file| run_with_gemfile(file) }
         end
-        self
       rescue Qor::Dsl::ConfigurationNotFound
         puts "ConfigurationNotFound, please run `qor_test --init` in project's root to get a sample configuration"
       end
 
       def run_with_gemfile(file)
+        $case_num += 1
+        scripts << "echo -n '\n\e[01;31m[ENV #{gemfile.group_name}] \e[0m'"
+        scripts << "echo -n '\e[31mRunning case #{$case_num} with ruby '$(ruby -v)', '$[$total_cases_num-#{$case_num}]' cases left\e[0m\n'"
+
         lock_file = "#{file}.lock"
         temp_file = "QorTest_" + File.basename(file)
         temp_lock = "#{temp_file}.lock"
@@ -51,7 +49,7 @@ module Qor
         scripts << "echo '>> BUNDLE_GEMFILE=#{file}'"
         scripts << "export BUNDLE_GEMFILE=#{temp_file}"
 
-        # Test commands. 1, bundle install, 2, rake test
+        # Test commands
         [
           "bundle install --quiet",
           "#{options[:command]}".sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')

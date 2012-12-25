@@ -1,3 +1,4 @@
+require 'qor_dsl'
 require 'digest/md5'
 
 module Qor
@@ -18,7 +19,7 @@ module Qor
       end
 
       def self.config_path
-        "config/qor/test.rb"
+        [ENV['QOR_TEST_CONFIG'], "config/qor/test.rb"].detect {|x| File.exist?(x.to_s)}
       end
 
       def self.gemfile_path
@@ -50,8 +51,9 @@ module Qor
       end
 
       def self.ruby_versions(options)
-        ruby_versions = [root_from_config, root_from_gemfile].map {|x| x.deep_find('ruby', &find_block(options)) }
-        ruby_versions.flatten.compact.map(&:value)
+        [root_from_config, root_from_gemfile] do |x|
+          x.deep_find('ruby', &find_block(options))
+        end.flatten.compact.map(&:value)
       end
 
       def self.envs(options={})

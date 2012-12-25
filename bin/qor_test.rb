@@ -48,9 +48,13 @@ envs = options[:env] ? [options[:env]] : Qor::Test::Configuration.envs
 envs = [nil] if envs.size == 0
 
 $case_num = 0
+
 scripts = envs.map do |env|
-  Qor::Test::CLI.new(options.merge(:env => env)).run.scripts
+  cli = Qor::Test::CLI.new(options.merge(:env => env))
+  cli.run
+  cli.scripts
 end
+
 scripts.unshift "total_cases_num=#{$case_num}"
 
 open(ENV['QOR_TEST_SCRIPT_FILE'] || 'qor_test.sh', 'a') do |f|
