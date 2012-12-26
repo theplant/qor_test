@@ -8,7 +8,7 @@
 
 ## Usage
 
-  First write a configuration file like below:
+  QorTest require a configuration file to know those dependencies and rubies need to be tested, For example:
 
     # config/qor/test.rb
     env '2.0' do
@@ -27,24 +27,24 @@
       gem 'rails', [3.1, 3.2]
     end
 
-  Then QorTest will generate 6 test cases according to it.
+  With above configuration, QorTest could generate 6 test cases.
 
-    1, run tests with rails 3.1 and ruby 2.0
-    2, run tests with rails 3.2 and ruby 2.0
-    3, run tests with rails 3.1 and ruby 1.9
-    4, run tests with rails 3.2 and ruby 1.9
-    5, run tests with rails 3.1 and ruby 1.8
-    6, run tests with rails 3.2 and ruby 1.8
+    1, Run tests with Rails 3.1 and Ruby 2.0
+    2, Run tests with Rails 3.2 and Ruby 2.0
+    3, Run tests with Rails 3.1 and Ruby 1.9
+    4, Run tests with Rails 3.2 and Ruby 1.9
+    5, Run tests with Rails 3.1 and Ruby 1.8
+    6, Run tests with Rails 3.2 and Ruby 1.8
 
-   Then run all above 6 cases in your project root by running
+  To run "tests" of above 6 cases, you could run `qor_test` in your project root:
 
       qor_test
 
-   Or only run those two cases in the '2.0' env by running
+   Or run those two cases in env '2.0' only by running
 
       qor_test -e '2.0'
 
-  All dependencies definitions outside env definition will be shared in all envs, so you could also simplify above configuration like below, it's the same!
+  All dependencies definitions outside env definition will be shared in all envs, so you could simplify above configuration like below, it's the same!
 
     # config/qor/test.rb
     gem 'rails', [3.1, 3.2]
@@ -62,7 +62,7 @@
       gem 'factory_girl_rails', '1.3.0'
     end
 
-  And you could write more advanced configuration:
+  Or you can write more advanced configuration:
 
     # config/qor/test.rb
     ruby '2.0'
@@ -73,9 +73,10 @@
     gem 'rails', [3.1, 3.2]
     gem 'devise', [2.2.0, 2.1.0, 2.0.0]
 
-  With it, QorTest will generate 54 test cases! (3 rubies x 3 paperclip x 2 rails x 3 devise), so it is dead easy to discover hidden compatibility issues!
+  With it, QorTest will generate 54 test cases! (3 rubies x 3 paperclip x 2 rails x 3 devise), is it dead easy to discover hidden compatibility issues?
 
-  Running `qor_test` will use `rake spec` to run tests in each case for projects using rspec and `rake test` for others. but you could specify the test command by overwrite the environment variable 'COMMAND', e.g:
+
+  Running `qor_test` will use command `rake spec` to run "tests" in each case for projects using rspec and `rake test` for others. but you could specify the test command by overwrite the environment variable 'COMMAND', e.g:
 
     COMMAND='ruby test/xxxx.rb' qor_test
 
@@ -88,5 +89,6 @@
 5. Create new Pull Request
 
 ## Author ##
-**Jinzhu**
-* <http://github.com/jinzhu>
+Jinzhu <http://github.com/jinzhu>
+
+* A Product From ThePlant <http://theplant.jp>
