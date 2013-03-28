@@ -69,7 +69,11 @@ scripts.push <<-EOF
   echo "\e[31mTotal Cases: $total_cases_num, Passed Cases: $pass_cases_num\e[0m"
   for name in ${failed_cases[@]}
   do
-    echo "\e[33mFailed Case: $name\e[0m"
+    if [[ $name =~ ^RUBY_VERSION ]]; then
+      echo "\e[33mFailed Case: (${name#RUBY_VERSION:})\e[0m"
+    else
+      echo "$name"
+    fi
   done
 EOF
 

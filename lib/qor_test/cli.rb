@@ -52,7 +52,7 @@ module Qor
         # Test commands
         [
           "bundle install --quiet",
-          "#{options[:command].sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')} && pass_cases_num=$(($pass_cases_num+1)) || failed_cases=(\"${failed_cases[@]}\" \"#{file}\")"
+          "#{options[:command].sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')} && pass_cases_num=$(($pass_cases_num+1)) || failed_cases=(\"${failed_cases[@]}\" \"RUBY_VERSION:$(ruby -v | sed 's/ /-/g') #{file}\")"
         ].map do |command|
           scripts << "echo '>> #{command.sub(/ && .*$/,'')}'"
           scripts << command unless options[:pretend]
