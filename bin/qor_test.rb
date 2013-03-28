@@ -49,14 +49,30 @@ envs = [nil] if envs.size == 0
 
 $case_num = 0
 
+script_filename = ENV['QOR_TEST_SCRIPT_FILE'] || 'qor_test.sh'
+
 scripts = envs.map do |env|
   cli = Qor::Test::CLI.new(options.merge(:env => env))
   cli.run
   cli.scripts
 end
 
-scripts.unshift "total_cases_num=#{$case_num}"
+scripts.unshift <<-EOF
+  total_cases_num=#{$case_num}
+  pass_cases_num=0
+  failed_cases=()
+EOF
 
-open(ENV['QOR_TEST_SCRIPT_FILE'] || 'qor_test.sh', 'a') do |f|
+scripts.push <<-EOF
+  echo
+  echo "(test script: #{script_filename})"
+  echo "\e[31mTotal Cases: $total_cases_num, Passed Cases: $pass_cases_num\e[0m"
+  for name in ${failed_cases[@]}
+  do
+    echo "\e[33mFailed Case: $name\e[0m"
+  done
+EOF
+
+open(script_filename, 'a') do |f|
   f.puts scripts.compact.join("\n")
 end

@@ -52,7 +52,7 @@ module Qor
         # Test commands
         [
           "bundle install --quiet",
-          "#{options[:command]}".sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')
+          "#{options[:command].sub(/^(bundle\s+exec\s+)?/, 'bundle exec ')} && pass_cases_num=$(($pass_cases_num+1)) || failed_cases=(\"${failed_cases[@]}\" \"#{file}\")"
         ].map do |command|
           scripts << "echo '>> #{command}'"
           scripts << command unless options[:pretend]
