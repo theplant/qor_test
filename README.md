@@ -2,6 +2,10 @@
 
   QorTest is the tool to test your library against different versions of gem dependencies and rubies (through rbenv or rvm)
 
+[![Build Status](https://secure.travis-ci.org/qor/qor_test.png?branch=master)](http://travis-ci.org/qor/qor_test)
+[![Dependency Status](https://gemnasium.com/qor/qor_test.png)](https://gemnasium.com/qor/qor_test)
+[![Code Climate](https://codeclimate.com/github/qor/qor_test.png)](https://codeclimate.com/github/qor/qor_test)
+
 ## Installation
 
     gem install qor_test
