@@ -74,7 +74,7 @@
 
     COMMAND='ruby test/xxxx.rb' qor_test
 
-## Screenshot for testing `Qor Test` with `Qor Test`
+## Screenshot for testing Qor Test with Qor Test
 
 [![Qor Test](https://raw.github.com/qor/qor_test/master/test/screenshot.png)](https://raw.github.com/qor/qor_test/master/test/screenshot.png)
 
