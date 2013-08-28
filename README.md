@@ -1,6 +1,8 @@
-# QorTest
+# Qor Test
 
-  QorTest is the tool to test your library against different versions of gem dependencies and rubies (through rbenv or rvm)
+  Qor Test is the tool to test your library against different versions of gem dependencies and rubies (through rbenv or rvm)
+
+  Make it easy to discovery compatibility issues!
 
 [![Build Status](https://secure.travis-ci.org/qor/qor_test.png?branch=master)](http://travis-ci.org/qor/qor_test)
 [![Dependency Status](https://gemnasium.com/qor/qor_test.png)](https://gemnasium.com/qor/qor_test)
@@ -10,55 +12,46 @@
 
     gem install qor_test
 
-## Usage
+## Quick Start
 
-  QorTest require a configuration file to know those dependencies and rubies need to be tested, For example:
+  Qor Test require a configuration file to know those dependencies and rubies you would like to test, Here is a sample configuration:
 
     # config/qor/test.rb
     env '2.0' do
       ruby '2.0'
-      gem 'rails', [3.1, 3.2]
-    end
-
-    env '1.9.3' do
-      ruby '1.9.3'
-      gem 'rails', [3.1, 3.2]
+      gem 'rails', [3.1, 3.2, 4.0]
     end
 
     env '1.8.7' do
       ruby '1.8.7'
-      gem 'factory_girl_rails', '1.3.0'
       gem 'rails', [3.1, 3.2]
     end
 
-  With above configuration, QorTest could generate 6 test cases.
+  With the above configuration, Qor Test could generate 5 test scenes.
 
-    1, Run tests with Rails 3.1 and Ruby 2.0
-    2, Run tests with Rails 3.2 and Ruby 2.0
-    3, Run tests with Rails 3.1 and Ruby 1.9
-    4, Run tests with Rails 3.2 and Ruby 1.9
-    5, Run tests with Rails 3.1 and Ruby 1.8
-    6, Run tests with Rails 3.2 and Ruby 1.8
+    1, Test your project with Rails 3.1 and Ruby 2.0
+    2, Test your project with Rails 3.2 and Ruby 2.0
+    3, Test your project with Rails 4.0 and Ruby 2.0
+    4, Test your project with Rails 3.1 and Ruby 1.8
+    5, Test your project with Rails 3.2 and Ruby 1.8
 
-  To run "tests" of above 6 cases, you could run `qor_test` in your project root:
+  In order to test your project in all above 5 scenes, You could simply run
 
-      qor_test
+    qor_test
 
-   Or run those two cases in env '2.0' only by running
+  Of course, you could specify a scene to test your project, for example, use `qor_test -e '2.0'` to test your project only with ruby 2.0.
 
-      qor_test -e '2.0'
+## Advanced Usage
 
-  All dependencies definitions outside env definition will be shared in all envs, so you could simplify above configuration like below, it's the same!
+  \* Dependencies defined outside would be shared in all scenes:
+
+  So you could write below configuration to test your project with rails 3.1, 3.2 in ruby 1.8, 1.9, 2.0. (6 scenes)
 
     # config/qor/test.rb
     gem 'rails', [3.1, 3.2]
 
-    env '2.0' do
-      ruby '2.0'
-    end
-
-    env '1.9.3' do
-      ruby '1.9.3'
+    env '1.9+' do
+      ruby ['1.9.3', '2.0']
     end
 
     env '1.8.7' do
@@ -66,23 +59,21 @@
       gem 'factory_girl_rails', '1.3.0'
     end
 
-  Or you can write more advanced configuration:
+ \* Gemfile options `git`, `branch`, `path` and so on is supported by Qor Test
 
     # config/qor/test.rb
-    ruby '2.0'
-    ruby '1.9.3'
-    ruby '1.8.7'
-
+    ruby ['2.0', '1.9.3', '1.8.7']
     gem 'paperclip', ['2.4.2', '3.3.0', {:git => "git@github.com:thoughtbot/paperclip.git", :branch => "master"}]
-    gem 'rails', [3.1, 3.2]
-    gem 'devise', [2.2.0, 2.1.0, 2.0.0]
+    gem 'rails', [3.1, 3.2, 4.0]
 
-  With it, QorTest will generate 54 test cases! (3 rubies x 3 paperclip x 2 rails x 3 devise), is it dead easy to discover hidden compatibility issues?
+\* RSpec is supported
 
+  Qor Test will invoke `rake spec` to run tests for rspec projects.
 
-  Running `qor_test` will use command `rake spec` to run "tests" in each case for projects using rspec and `rake test` for others. but you could specify the test command by overwrite the environment variable 'COMMAND', e.g:
+  And you could even specify a test command by passing environment variable 'COMMAND'. For Example:
 
     COMMAND='ruby test/xxxx.rb' qor_test
+
 
 ## Contributing
 
@@ -92,7 +83,8 @@
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-## Author ##
-Jinzhu <http://github.com/jinzhu>
 
-* A Product From ThePlant <http://theplant.jp>
+## Credits
+#### Author: Jinzhu <http://github.com/jinzhu>
+
+#### A Product From ThePlant  <http://theplant.jp>

@@ -6,8 +6,8 @@ require "qor_test/version"
 Gem::Specification.new do |gem|
   gem.authors       = ["Jinzhu"]
   gem.email         = ["wosmvp@gmail.com"]
-  gem.description   = %q{Qor Test: Make test easier!}
-  gem.summary       = %q{Qor Test: Make test easier!}
+  gem.description   = %q{Qor Test: Make it easy to discovery compatibility issues!}
+  gem.summary       = %q{Qor Test: Make it easy to discovery compatibility issues!}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)

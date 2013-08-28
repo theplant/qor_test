@@ -52,8 +52,8 @@ module Qor
 
       def self.ruby_versions(options)
         [root_from_config, root_from_gemfile].map do |x|
-          x.deep_find('ruby', &find_block(options))
-        end.flatten.compact.map(&:value)
+          x.deep_find('ruby', &find_block(options)).map(&:value)
+        end.flatten.compact
       end
 
       def self.envs(options={})
