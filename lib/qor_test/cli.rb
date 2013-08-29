@@ -34,8 +34,8 @@ module Qor
 
       def run_with_gemfile(file)
         $case_num += 1
-        scripts << "echo -n '\n\e[01;31m[ENV #{gemfile.group_name}] \e[0m'"
-        scripts << "echo -n '\e[31mRunning case #{$case_num} with ruby '$(ruby -v)', '$[$total_cases_num-#{$case_num}]' cases left\e[0m\n'"
+        scripts << "echo -n '\n\e[01;31m[ENV #{gemfile.group_name}] \e[0m'" unless gemfile.group_name.nil?
+        scripts << "echo -n '\e[31mRunning case #{$case_num} with '$(ruby -v)', '$[$total_cases_num-#{$case_num}]' cases left\e[0m\n'"
 
         lock_file = "#{file}.lock"
         temp_file = "QorTest_" + File.basename(file)

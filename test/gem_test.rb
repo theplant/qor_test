@@ -26,7 +26,10 @@ describe Gem do
     end
 
     Qor::Test::Gem.parse(config.first("gem")).length.must_equal 2
-    Qor::Test::Gem.parse(config.first("gem"))[0].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"1.4"}'
+    # Don't test below case with ruby 1.8 due to hash is not ordered in 1.8
+    if RUBY_VERSION !~ /1.8/
+      Qor::Test::Gem.parse(config.first("gem"))[0].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"1.4"}'
+    end
     Qor::Test::Gem.parse(config.first("gem"))[1].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git"}'
 
     # case 4
@@ -35,7 +38,9 @@ describe Gem do
     end
 
     Qor::Test::Gem.parse(config.first("gem")).length.must_equal 1
-    Qor::Test::Gem.parse(config.first("gem"))[0].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"1.4"}'
+    if RUBY_VERSION !~ /1.8/
+      Qor::Test::Gem.parse(config.first("gem"))[0].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"1.4"}'
+    end
 
     # case 5
     config = Qor::Test::Configuration.load(nil, :force => true) do
@@ -63,7 +68,9 @@ describe Gem do
     end
 
     Qor::Test::Gem.parse(config.deep_find("gem")[0]).length.must_equal 1
-    Qor::Test::Gem.parse(config.deep_find("gem")[0])[0].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"1.4"}'
+    if RUBY_VERSION !~ /1.8/
+      Qor::Test::Gem.parse(config.deep_find("gem")[0])[0].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"1.4"}'
+    end
 
     # case 8
     config = Qor::Test::Configuration.load(nil, :force => true) do
@@ -92,7 +99,9 @@ describe Gem do
     end
 
     Qor::Test::Gem.parse(config.deep_find("gem")[0]).length.must_equal 2
-    Qor::Test::Gem.parse(config.deep_find("gem")[0])[0].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"1.4"}'
-    Qor::Test::Gem.parse(config.deep_find("gem")[0])[1].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"2.0"}'
+    if RUBY_VERSION !~ /1.8/
+      Qor::Test::Gem.parse(config.deep_find("gem")[0])[0].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"1.4"}'
+      Qor::Test::Gem.parse(config.deep_find("gem")[0])[1].to_s.must_equal 'gem "nokogiri", {:git=>"git://github.com/tenderlove/nokogiri.git", :branch=>"2.0"}'
+    end
   end
 end
