@@ -1,8 +1,6 @@
-# Qor Test
+# Qor Test - Make it easy to discovery compatibility issues!
 
-  Qor Test is the tool to test your library against different versions of gem dependencies and rubies (through rbenv or rvm)
-
-  Make it easy to discovery compatibility issues!
+  Qor Test is a tool to test your projects against different versions of gem dependencies and rubies (through rbenv or rvm)
 
 [![Build Status](https://secure.travis-ci.org/qor/qor_test.png?branch=master)](http://travis-ci.org/qor/qor_test)
 [![Dependency Status](https://gemnasium.com/qor/qor_test.png)](https://gemnasium.com/qor/qor_test)
@@ -27,7 +25,7 @@
       gem 'rails', [3.1, 3.2]
     end
 
-  With the above configuration, Qor Test could generate 5 test scenes.
+  With above configuration, Qor Test will generate 5 test scenes.
 
     1, Test your project with Rails 3.1 and Ruby 2.0
     2, Test your project with Rails 3.2 and Ruby 2.0
@@ -39,13 +37,13 @@
 
     qor_test
 
-  Of course, you could specify a scene to test your project, for example, use `qor_test -e '2.0'` to test your project only with ruby 2.0.
+  Of course, you could specify one scene when test your project, for example, use `qor_test -e '2.0'` to test your project only under ruby 2.0.
 
 ## Advanced Usage
 
   \* Dependencies defined outside would be shared in all scenes:
 
-  So you could write below configuration to test your project with rails 3.1, 3.2 in ruby 1.8, 1.9, 2.0. (6 scenes)
+  So you could use below configuration to test your project with rails 3.1, 3.2 under ruby 1.8, 1.9, 2.0. (6 scenes)
 
     # config/qor/test.rb
     gem 'rails', [3.1, 3.2]
@@ -59,7 +57,7 @@
       gem 'factory_girl_rails', '1.3.0'
     end
 
- \* Gemfile options `git`, `branch`, `path` and so on is supported by Qor Test
+ \* Gemfile options `git`, `branch`, `path` and so on are supported by Qor Test
 
     # config/qor/test.rb
     ruby ['2.0', '1.9.3', '1.8.7']
@@ -70,9 +68,16 @@
 
   Qor Test will invoke `rake spec` to run tests for rspec projects.
 
-  And you could even specify a test command by passing environment variable 'COMMAND'. For Example:
+  And you could even specify a test command by passing environment variable 'COMMAND'. e.g:
 
     COMMAND='ruby test/xxxx.rb' qor_test
+
+\* Specify a configuration file
+
+  You can do it by passing environment variable `QOR_TEST_CONFIG`. e.g:
+
+    QOR_TEST_CONFIG=~/test.rb qor_test
+
 
 ## Test Qor Test with Qor Test
 
