@@ -74,8 +74,21 @@
 
     COMMAND='ruby test/xxxx.rb' qor_test
 
-## Screenshot for testing Qor Test with Qor Test
+## Test Qor Test with Qor Test
 
+#### Configuration
+
+    # config/qor/test.rb
+    env '1.9+' do
+      ruby ['1.9.3', '2.0']
+    end
+
+    env '1.8.7' do
+      ruby '1.8.7'
+      gem 'minitest', '4.3'
+    end
+
+#### Screenshot
 [![Qor Test](https://raw.github.com/qor/qor_test/master/test/screenshot.png)](https://raw.github.com/qor/qor_test/master/test/screenshot.png)
 
 ## Contributing
